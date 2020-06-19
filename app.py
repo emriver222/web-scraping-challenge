@@ -1,25 +1,37 @@
-from flask import Flask, render_template
-import pymongo
+from flask import Flask, render_template, redirect
+from flask_pymongo import PyMongo
+import scrape_mars
 
+# Create an instance of Flask
 app = Flask(__name__)
 
-# setup mongo connection
-conn = "mongodb://localhost:27017"
-client = pymongo.MongoClient(conn)
-
-# connect to mongo db and collection
-db = client.store_inventory
-produce = db.produce
+# Use PyMongo to establish Mongo connection
+mongo = PyMongo(app, uri="mongodb://localhost:27017/SpaceDB")
 
 
+# Route to render index.html template using data from Mongo
 @app.route("/")
-def index():
-    # write a statement that finds all the items in the db and sets it to a variable
-    inventory = list(produce.find())
-    print(inventory)
+def home():
 
-    # render an index.html template and pass it the data you retrieved from the database
-    return render_template("index.html", inventory=inventory)
+    # Find one record of data from the mongo database
+    Mars_data = mongo.db.collection.find_one()
+
+    # Return template and data
+    return render_template("index.html", Space=Mars_data)
+
+
+# Route that will trigger the scrape function
+@app.route("/scrape")
+def scrape():
+
+    # Run the scrape function
+    scrape = scrape_mars.scrape_info()
+
+    # Update the Mongo database using update and upsert=True
+    mongo.db.collection.update({}, scrape, upsert=True)
+
+    # Redirect back to home page
+    return redirect("/")
 
 
 if __name__ == "__main__":

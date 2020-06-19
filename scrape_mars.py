@@ -199,19 +199,23 @@ def scrape():
 
         hemisphereImages
 
-        results = { "Mars most recent report:": first_title,
-                "Report descr": first_body,
-                "Space image url": image_url,
-                "Latest space tweet": tweet,
-                "Metric Table": table_df,
-                "Cerberus Hemisphere": hemUrl_1,
-                "Schiaparelli Hemisphere": hemUrl_2,
-                "Syrtis Major Hemisphere": hemUrl_3,
-                "Valles Marineris Hemisphere": hemUrl_4
+        Mars_Export = { "Report_title:": first_title,
+                "Report_descr": first_body,
+                "img_url": image_url,
+                "tweet": tweet,
+                "Metric_table": table_df,
+                "Hem_1": hemUrl_1,
+                "Hem_2": hemUrl_2,
+                "Hem_3": hemUrl_3,
+                "Hem_4": hemUrl_4
                 }
         
         
-        return results
+
+         # Close the browser after scraping
+        browser.quit()
+
+        return Mars_Export
 
 
 
